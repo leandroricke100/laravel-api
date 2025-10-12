@@ -7,18 +7,21 @@ use App\Http\Requests\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::paginate();
+        // $posts = Post::with('comments')->get();
+        $posts = QueryBuilder::for(Post::class)
+            ->allowedFilters(['title', 'body'])
+            ->defaultSort('title')
+            ->allowedSorts(['title'])
+            ->allowedIncludes(['comments'])
+            ->paginate();
 
         return PostResource::collection($posts);
-
-        // return response()->json([
-        //     'data' => $posts
-        // ], 200);
     }
 
     public function store(PostStoreRequest $request)
@@ -36,6 +39,8 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+
+        $post->load('comments');
         return new PostResource($post);
         // return response()->json([
         //     'data' => $post
