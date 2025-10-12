@@ -16,7 +16,7 @@ class PostController extends Controller
         // $posts = Post::with('comments')->get();
         $posts = QueryBuilder::for(Post::class)
             ->allowedFilters(['title', 'body'])
-            ->defaultSort('title')
+            // ->defaultSort('title')
             ->allowedSorts(['title'])
             ->allowedIncludes(['comments'])
             ->paginate();
